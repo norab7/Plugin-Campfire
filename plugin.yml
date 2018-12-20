@@ -1,0 +1,12 @@
+main: baron.rol.main.PluginMain
+name: CampfirePlugin
+version: 1.0
+api-version: 1.13
+author: norab7
+description: Makes a campfire out of 4 torches
+commands:
+  /campfire: 
+    description: Test that the plugin is loaded correctly
+    usage: //campfire
+#    permission: myplugin.mycommand
+#    permission-message: You don't have the myplugin.mycommand permission.

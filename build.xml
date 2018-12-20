@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="CampfirePlugin" default="makejar" basedir=".">
+    <target name="makejar" description="Create a jar for the project">
+        <mkdir dir="..Plugin"></mkdir>
+        <jar destfile="D:\_Data\_Minecraft\_Server\plugins/${ant.project.name}.jar">
+            <fileset dir="bin"></fileset>
+            <fileset file="plugin.yml"></fileset>
+        </jar>
+    </target>
+</project>
