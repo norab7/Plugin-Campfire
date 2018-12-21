@@ -5,65 +5,92 @@ import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * Used to create camp fires using items, positions, and block types. If there
+ * are a required amount of correct items in a stack it will alter the block
+ * type on position to the fire block type. If the fire has ran it's course it
+ * will change the below position block type to the eventual block type.
+ * 
+ * @author norab7
+ *
+ */
 public class Campfire {
+
+	// Some basic variables
 	private long fireTime;
-	private Location torchPos;
-	private Location onBlock;
-	private ItemStack torchStack;
+	private Location tinderPos;
+	private Location onBlockPos;
+	private ItemStack tinderStack;
 
-	private long duration;
-	private boolean canCampfire = false;
+	/**
+	 * Create a camp fire object using the dropped 'ITEM' for information
+	 * 
+	 * @param item
+	 */
+	public Campfire(Item item) {
 
-	public Campfire(Item d, int t) {
+		// Get Locations
+		this.tinderPos = item.getLocation();
+		this.onBlockPos = new Location(tinderPos.getWorld(), 0, -1, 0).add(tinderPos);
 
-		// get the location and check for log under
-		this.torchPos = d.getLocation();
-		this.onBlock = new Location(torchPos.getWorld(), 0, -1, 0).add(torchPos);
-		if (!isOnLog()) {
+		// Check if drop is on correct block
+		if (!isOnRightBlock()) {
 			return;
 		}
 
-		// set base values
+		// Set stack and creation time
 		this.fireTime = System.currentTimeMillis();
-		this.torchStack = d.getItemStack();
-		this.duration = t * 1000;
-
-		// if there is 4 torches create a camp fire in place of the log block
-		if (torchStack.getAmount() >= 4) {
-			System.out.println("HAS 4 TORCHES");
-			canCampfire = true;
-		}
+		this.tinderStack = item.getItemStack();
 
 	}
 
-	// Check that the block under the dropped position is a log
-	private boolean isOnLog() {
+	/**
+	 * Check if the dropped item position is on top of the correct eventual block
+	 * 
+	 * @return boolean
+	 */
+	private boolean isOnRightBlock() {
 
-		String onBlockName = onBlock.getBlock().getType().name();
-
-		if (onBlockName.contains("LOG")) {
-			System.out.println("CampfireBlock: " + onBlockName);
+		if (onBlockPos.getBlock().getType().name().contains(PluginMain.onBlock)) {
 			return true;
 		}
 		return false;
 	}
 
-	// Spawn a fire in place of the log block
+	/**
+	 * Creates a fire block on the dropped item position
+	 */
 	public void createCampfire() {
-		torchPos.getBlock().setType(Material.FIRE);
+		tinderPos.getBlock().setType(PluginMain.fireblock);
 	}
 
+	/**
+	 * Checks if the quantity of dropped items in the stack matches the required for
+	 * a camp fire to be created
+	 * 
+	 * @return
+	 */
 	public boolean canCampfire() {
-		return this.canCampfire;
+		if (tinderStack.getAmount() >= PluginMain.quantity) {
+			return true;
+		}
+		return false;
 	}
 
-	public boolean setMagma() {
+	/**
+	 * Using a runnable checks if the fire has been alive for the required duration
+	 * to convert into a eventual block
+	 * 
+	 * @return
+	 */
+	public boolean setEventualBlock() {
 
-		if ((System.currentTimeMillis() - fireTime) >= duration) {
-			if (torchPos.getBlock().getType().equals(Material.FIRE)
-					&& onBlock.getBlock().getType().name().contains("LOG")) {
-				torchPos.getBlock().setType(Material.AIR);
-				onBlock.getBlock().setType(Material.MAGMA_BLOCK);
+		// Compares time of creation against the current time and converts to eventual
+		if ((System.currentTimeMillis() - fireTime) >= (PluginMain.duration * 1000)) {
+			if (tinderPos.getBlock().getType().equals(PluginMain.fireblock)
+					&& onBlockPos.getBlock().getType().name().contains(PluginMain.onBlock)) {
+				tinderPos.getBlock().setType(Material.AIR);
+				onBlockPos.getBlock().setType(PluginMain.eventual);
 			}
 			return true;
 		}

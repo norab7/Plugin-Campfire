@@ -5,6 +5,7 @@
         <jar destfile="D:\_Data\_Minecraft\_Server\plugins/${ant.project.name}.jar">
             <fileset dir="bin"></fileset>
             <fileset file="plugin.yml"></fileset>
+        	<fileset file="config.yml"></fileset>
         </jar>
     </target>
 </project>
